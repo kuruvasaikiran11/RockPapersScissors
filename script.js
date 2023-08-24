@@ -1,118 +1,128 @@
+//To keep track of score
 let player = 0
 let comp = 0
 
+let rock = document.getElementById("rock-icon")
+let paper = document.getElementById("paper-icon")
+let scissor = document.getElementById("scissors-icon")
+
+
+//Computer selection
 function getComputerChoice(){
     const choice = ["rock", "paper", "scissors"]
     const random = Math.floor(Math.random() * choice.length)
+    // console.log(random)
     return choice[random]
 }
-function playRound(playerSelection, computerSelection) {
-    // your code here!
-    if(player == 5){
-        alert("Congrats!! You won")
-    }else if(comp == 5){
-        alert("You Lose! Better luck next time")
-    }
 
+//Playing Rounds 
+function playRound(playerSelection, computerSelection) {
+    let message
+    let winner
+    let loser
     if(playerSelection == computerSelection){
-        // return "It's a Drawwwwww!!"
         message = "draw"
+        winner = playerSelection
+        loser = computerSelection
+        // return "It's a Drawwwwww!!"
     }else if((playerSelection == "paper" && computerSelection == "rock") || (playerSelection == "scissors" && computerSelection == "paper") 
     || (playerSelection == "rock" && computerSelection == "scissors")){
         player++
-        // return "You Won! " + playerSelection + " beats " + computerSelection
         message = "player"
+        winner = playerSelection
+        loser = computerSelection
+        // return "You Won! " + playerSelection + " beats " + computerSelection
     }else{
         comp++
-        // return "You Lose! " + computerSelection + " beats " + playerSelection
         message = "computer"
+        winner = computerSelection
+        loser = playerSelection
+        // return "You Lose! " + computerSelection + " beats " + playerSelection
     }
-
-    updateScores(message, player, comp)
+    updateScores(message, winner, loser, player, comp)
 } 
 
-function checkWinner(p, c){
-    if(p == c){
-        console.log("Game Tied !!!")
-    }else if(p > c){
-        console.log("Congratulations!!!! You won")
-    }else{
-        console.log("Better luck next time. You lose")
-    }
-}
-
-var rock = document.getElementById("rock-icon")
-var paper = document.getElementById("paper-icon")
-var scissor = document.getElementById("scissors-icon")
-function getPlayerChoice(){
-    var choice;
-    rock.addEventListener("click", function(){
-        choice = "rock"
-    })
-    paper.addEventListener("click", function(){
-        choice = "paper"
-    })
-    scissor.addEventListener("click", function(){
-        choice = "scissors"
-    })
-    return choice
-}
-
-// const playerSelection = (prompt('Please enter your choice from "{rock/paper/scissors}"')).toLowerCase()
-let playerSelection;
-var playerSign = document.getElementById("playerSign")
-var computerSign = document.getElementById("computerSign")
-let computerSelection
-function game(){
-    computerSelection = getComputerChoice();
+//Start the Game
+function game(){    
     // computerSign.innerText = ""
     rock.addEventListener("click", function(){
         playerSelection = "rock"
+        computerSelection = getComputerChoice();
         // console.log(playerSelection, computerSelection)
-        playRound(playerSelection, computerSelection);
         playerSign.innerText = "✊"
         updateChoice(computerSelection)
-    })
+        playRound(playerSelection, computerSelection);
+    });
     paper.addEventListener("click", function(){
         playerSelection = "paper"
+        computerSelection = getComputerChoice();
         // console.log(playerSelection, computerSelection)
-        playRound(playerSelection, computerSelection);
         playerSign.innerText = "✋"
         updateChoice(computerSelection)
-    })
+        playRound(playerSelection, computerSelection);
+    });
     scissor.addEventListener("click", function(){
         playerSelection = "scissors"
+        computerSelection = getComputerChoice();
         // console.log(playerSelection)
-        playRound(playerSelection, computerSelection);
         playerSign.innerText = "✌️"
         updateChoice(computerSelection)
-    })
+        playRound(playerSelection, computerSelection);
+    });
 }
 
-// console.log(playerSelection, computerSelection)
-// console.log(playRound(playerSelection, computerSelection));
-var scoreInfo = document.getElementById("heading")
-var result = document.getElementById("result")
-var score = document.getElementById("score")
-var playerScore = document.getElementById("player-score")
-var computerScore = document.getElementById("comp-score")
-
-
-function updateScores(message, player, computer){
-    playerScore.innerText = "Player : " + player
-    computerScore.innerText = "Computer : " + computer
-
-    result.innerText = ""
-
-    if(message = "draw"){
-        scoreInfo.innerText = "It's a Draw"
-    }else if(message = "player"){
-        scoreInfo.innerText = "You Won! " + player + " beats " + computer
-    }else{
-        scoreInfo.innerText = "You Lose! " + computer + " beats " + player
+//Winner Validation
+function checkWinner(p, c) {
+    if (c === 5) {
+        setTimeout(function () {
+            alert("Better luck next time. You lose");
+            restartGame();
+        }, 0);
+    } else if (p === 5) {
+        setTimeout(function () {
+            alert("Congratulations!!!! You won");
+            restartGame();
+        }, 0);
     }
 }
 
+
+//Update Scores in UI
+//To update scores on UI
+let scoreInfo = document.getElementById("heading")
+let result = document.getElementById("result")
+let playerScore = document.getElementById("player-score")
+let computerScore = document.getElementById("comp-score")
+
+//update player & computer selection
+let playerSelection;
+let playerSign = document.getElementById("playerSign")
+let computerSign = document.getElementById("computerSign")
+let computerSelection
+
+function updateScores(message, winner, loser, player, computer){
+    playerScore.innerText = "Player : " + player
+    computerScore.innerText = "Computer : " + computer
+
+    // result.innerText = winner + " beats " + loser
+
+    if(message === "draw"){
+        scoreInfo.innerText = "It's a Draw"
+        result.innerText = winner + " ties " + loser
+    }else if(message === "player"){
+        scoreInfo.innerText = "You Won!" 
+        result.innerText = winner + " beats " + loser
+    }else{
+        scoreInfo.innerText = "You Lose!"
+        result.innerText = winner + " beats " + loser
+    }
+
+    if(player === 5 || computer === 5){
+        checkWinner(player, computer)
+    }
+}
+
+//Updates Computer Selection
 function updateChoice(computer){
     if(computer == "rock"){
         computerSign.innerText = "✊"
@@ -121,6 +131,18 @@ function updateChoice(computer){
     }else{
         computerSign.innerText = "✌️"
     }
+}
+
+//Restarts Game 
+function restartGame(){
+    player = 0
+    comp = 0
+    scoreInfo.innerText = "Choose Your Option"
+    result.innerText = "First to score 5 points will win the game"
+    playerSign.innerText = "❓"
+    computerSign.innerText = "❓"
+    playerScore.innerText = "Player : 0"
+    computerScore.innerText = "Computer : 0"
 }
 
 game()
